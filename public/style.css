@@ -1308,6 +1308,7 @@ button {
   box-shadow: var(--shadow-sm);
   display: flex;
   flex-direction: column;
+  margin-top: 26px;
 }
 
 .terminal-header {

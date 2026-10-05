@@ -782,13 +782,20 @@ function appendTerminalLine(text, className = '') {
   terminalBody.scrollTop = terminalBody.scrollHeight;
 }
 
-function clearTerminal() {
+async function clearTerminal() {
   if (!terminalBody) return;
   terminalBody.innerHTML = '';
+  lastLogCount = 0;
+
   if (activeTerminalTab === 'cmd') {
     appendTerminalLine('Xortlogix Bot Terminal [Web Console v1.0]', 'term-system');
     appendTerminalLine('Type "help" for commands, "status" for stats, or click Live Logs.', 'term-dim');
     appendTerminalLine('────────────────────────────────────────────────────────────────', 'term-dim');
+  } else if (activeTerminalTab === 'logs') {
+    terminalBody.innerHTML = '<div class="term-line term-dim">Logs cleared. Waiting for new events...</div>';
+    try {
+      await fetch('/api/terminal/logs/clear', { method: 'POST' });
+    } catch (_) {}
   }
 }
 

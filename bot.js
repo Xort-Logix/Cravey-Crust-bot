@@ -471,6 +471,11 @@ app.get('/api/terminal/logs', (req, res) => {
     res.json({ logs: terminalLogs });
 });
 
+app.post('/api/terminal/logs/clear', (req, res) => {
+    terminalLogs.length = 0;
+    res.json({ success: true, message: 'Logs cleared' });
+});
+
 app.post('/api/terminal/execute', async (req, res) => {
     const { command } = req.body;
     if (!command || !command.trim()) {
