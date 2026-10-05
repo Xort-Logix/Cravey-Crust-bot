@@ -762,7 +762,25 @@ async function startSession(session, options = {}) {
         markOnlineOnConnect: true,
         generateHighQualityLinkPreview: true,
         syncFullHistory: false,
+        getMessage: async (key) => {
+            if (!key || !key.id) return undefined;
+            const storeKey = `${key.remoteJid}_${key.id}`;
+            const cached = global.messageCache.get(storeKey);
+            if (cached && cached.message) return cached.message;
+            return undefined;
+        },
     });
+
+    // Intercept sent messages to store in cache for retry decryption requests
+    const origSendMessage = sock.sendMessage.bind(sock);
+    sock.sendMessage = async (...args) => {
+        const result = await origSendMessage(...args);
+        if (result && result.key && result.message) {
+            const storeKey = `${result.key.remoteJid}_${result.key.id}`;
+            global.messageCache.set(storeKey, result);
+        }
+        return result;
+    };
 
     session.sock = sock;
 
