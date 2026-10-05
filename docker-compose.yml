@@ -1,0 +1,22 @@
+services:
+  whatsapp-bot:
+    build: .
+    container_name: whatsapp-bot
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      - PORT=${PORT:-3000}
+      - PREFIX=${PREFIX:-.}
+      - OWNER_NUMBER=${OWNER_NUMBER:-}
+      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+    volumes:
+      # Crucial: persist auth state so you don't need to re-scan QR code on container restarts
+      - ./auth:/app/auth
+      - ./downloads:/app/downloads
+      - ./public:/app/public
+    stdin_open: true
+    tty: true

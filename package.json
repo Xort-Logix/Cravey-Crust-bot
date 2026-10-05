@@ -1,0 +1,35 @@
+{
+  "name": "whatsapp-bot",
+  "version": "1.0.0",
+  "description": "Production-ready WhatsApp automation bot using Baileys",
+  "main": "bot.js",
+  "type": "module",
+  "scripts": {
+    "start": "node bot.js",
+    "dev": "node bot.js"
+  },
+  "keywords": [
+    "whatsapp",
+    "bot",
+    "automation",
+    "baileys"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@whiskeysockets/baileys": "^6.7.16",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "express": "^5.2.1",
+    "fluent-ffmpeg": "^2.1.3",
+    "link-preview-js": "^3.0.5",
+    "openai": "^4.77.0",
+    "pino": "^9.6.0",
+    "qrcode": "^1.5.4",
+    "qrcode-terminal": "^0.12.0",
+    "sharp": "^0.33.5"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  }
+}
