@@ -4,10 +4,10 @@
 
 :root {
   /* Brand */
-  --accent: #4ade9a;
-  --accent-2: #6ee7b7;
-  --accent-soft: rgba(74, 222, 154, 0.14);
-  --accent-line: rgba(74, 222, 154, 0.28);
+  --accent: #FFD600;
+  --accent-2: #fbd500;
+  --accent-soft: rgba(255, 214, 0, 0.14);
+  --accent-line: rgba(255, 214, 0, 0.28);
 
   /* Dark surface (Default) */
   --bg: #0a0f0d;
