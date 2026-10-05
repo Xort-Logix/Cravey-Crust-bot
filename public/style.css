@@ -2028,6 +2028,28 @@ button {
   font-family: var(--f-sans);
 }
 
+.toggle-password-btn {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg-muted);
+  transition: color 0.2s;
+}
+
+.toggle-password-btn:hover,
+.toggle-password-btn:focus {
+  color: var(--fg);
+  outline: none;
+}
+
+.toggle-password-btn svg {
+  color: inherit !important;
+}
+
 .auth-hint {
   text-align: center;
   font-family: var(--f-mono);
