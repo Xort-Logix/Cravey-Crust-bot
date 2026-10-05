@@ -607,7 +607,8 @@ app.post('/api/terminal/execute', async (req, res) => {
 });
 
 app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🌐 Dashboard web server running at http://0.0.0.0:${PORT}`);
+    const displayHost = process.env.SERVER_IP || process.env.PUBLIC_IP || '201.18.214.97';
+    console.log(`🌐 Dashboard web server running at http://${displayHost}:${PORT}`);
 });
 
 // ─── Bounded Message ID Cache (duplicate-message protection) ────────────

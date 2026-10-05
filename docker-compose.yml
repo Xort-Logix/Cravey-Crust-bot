@@ -19,6 +19,7 @@ services:
       - N8N_WEBHOOK_URL=${N8N_WEBHOOK_URL:-https://n8n.srv2029678.hstgr.cloud/webhook/whatsapp-incoming}
       - N8N_BOT_SECRET=${N8N_BOT_SECRET:-my-test-secret-123}
       - N8N_TIMEOUT=${N8N_TIMEOUT:-10000}
+      - SERVER_IP=${SERVER_IP:-201.18.214.97}
     volumes:
       # Crucial: persist auth state so you don't need to re-scan QR code on container restarts
       - ./auth:/app/auth
