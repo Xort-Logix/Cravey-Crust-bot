@@ -415,7 +415,59 @@
         </div>
       </section>
 
-    </main>
+    <!-- Interactive Web CMD / Live Logs Terminal Portal -->
+    <section class="terminal-card">
+      <div class="terminal-header">
+        <div class="terminal-controls">
+          <span class="control-dot dot-red"></span>
+          <span class="control-dot dot-yellow"></span>
+          <span class="control-dot dot-green"></span>
+        </div>
+        <div class="terminal-title">
+          <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="4 17 10 11 4 5"></polyline>
+            <line x1="12" y1="19" x2="20" y2="19"></line>
+          </svg>
+          <span class="term-title-text">whatsapp-bot@docker:~$</span>
+        </div>
+        <div class="terminal-actions">
+          <button id="terminalTabCmd" class="term-tab active" type="button"><span class="tab-long">Interactive </span>CMD</button>
+          <button id="terminalTabLogs" class="term-tab" type="button"><span class="tab-long">Live </span>Logs</button>
+          <button id="terminalClearBtn" class="term-btn-icon" type="button" title="Clear Screen">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="3 6 5 6 21 6"></polyline>
+              <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            </svg>
+          </button>
+          <button id="terminalToggleCollapseBtn" class="term-btn-icon term-collapse-btn" type="button" title="Minimize / Expand Terminal">
+            <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="6 9 12 15 18 9"></polyline>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Terminal Output Area -->
+      <div id="terminalBody" class="terminal-body">
+        <div class="term-line term-system">WhatsApp Bot Interactive Terminal [Web Console v1.0]</div>
+        <div class="term-line term-dim">Type <span class="term-cyan">help</span> for commands, <span class="term-cyan">status</span> for stats, or click <span class="term-cyan">Live Logs</span>.</div>
+        <div class="term-line term-dim">────────────────────────────────────────────────────────────────</div>
+      </div>
+
+      <!-- Command Input Prompt -->
+      <form id="terminalForm" class="terminal-input-bar">
+        <span class="term-prompt"><span class="prompt-long">bot@whatsapp:</span>~$</span>
+        <input 
+          type="text" 
+          id="terminalInput" 
+          class="terminal-input" 
+          placeholder="Type command (help, status, .ping)..." 
+          autocomplete="off"
+          spellcheck="false"
+        />
+        <button type="submit" class="term-run-btn">Run ↵</button>
+      </form>
+    </section>
 
     <!-- Logout Confirmation Modal -->
     <div id="logoutModal" class="modal-backdrop hidden">
@@ -437,6 +489,6 @@
     </div>
   </div>
 
-  <script src="app.js?v=4.3.0"></script>
+  <script src="app.js?v=4.4.0"></script>
 </body>
 </html>

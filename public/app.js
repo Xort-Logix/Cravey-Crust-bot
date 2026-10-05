@@ -752,6 +752,186 @@ setInterval(() => {
   if (isAuthenticated) checkStatus();
 }, 2000);
 
-// ─── Terminal logic removed ────────────────────────────────
-window.insertTerminalCmd = function(cmd) {};
+// ─── Interactive Web Terminal / Live Logs Portal ────────────
+const terminalBody = document.getElementById('terminalBody');
+const terminalForm = document.getElementById('terminalForm');
+const terminalInput = document.getElementById('terminalInput');
+const terminalTabCmd = document.getElementById('terminalTabCmd');
+const terminalTabLogs = document.getElementById('terminalTabLogs');
+const terminalClearBtn = document.getElementById('terminalClearBtn');
+const terminalToggleCollapseBtn = document.getElementById('terminalToggleCollapseBtn');
+const terminalCard = document.querySelector('.terminal-card');
+
+if (terminalToggleCollapseBtn && terminalCard) {
+  terminalToggleCollapseBtn.addEventListener('click', () => {
+    terminalCard.classList.toggle('collapsed');
+  });
+}
+
+let activeTerminalTab = 'cmd'; // 'cmd' | 'logs'
+let commandHistory = [];
+let historyIndex = -1;
+let lastLogCount = 0;
+
+function appendTerminalLine(text, className = '') {
+  if (!terminalBody) return;
+  const line = document.createElement('div');
+  line.className = `term-line ${className}`;
+  line.textContent = text;
+  terminalBody.appendChild(line);
+  terminalBody.scrollTop = terminalBody.scrollHeight;
+}
+
+function clearTerminal() {
+  if (!terminalBody) return;
+  terminalBody.innerHTML = '';
+  if (activeTerminalTab === 'cmd') {
+    appendTerminalLine('WhatsApp Bot Terminal [Web Console v1.0]', 'term-system');
+    appendTerminalLine('Type "help" for commands, "status" for stats, or click Live Logs.', 'term-dim');
+    appendTerminalLine('────────────────────────────────────────────────────────────────', 'term-dim');
+  }
+}
+
+if (terminalClearBtn) {
+  terminalClearBtn.addEventListener('click', clearTerminal);
+}
+
+if (terminalTabCmd && terminalTabLogs && terminalForm) {
+  terminalTabCmd.addEventListener('click', () => {
+    activeTerminalTab = 'cmd';
+    terminalTabCmd.classList.add('active');
+    terminalTabLogs.classList.remove('active');
+    terminalForm.style.display = 'flex';
+    clearTerminal();
+  });
+
+  terminalTabLogs.addEventListener('click', () => {
+    activeTerminalTab = 'logs';
+    terminalTabLogs.classList.add('active');
+    terminalTabCmd.classList.remove('active');
+    terminalForm.style.display = 'none';
+    if (terminalBody) {
+      terminalBody.innerHTML = '<div class="term-line term-dim">Streaming live container logs...</div>';
+    }
+    fetchLiveLogs(true);
+  });
+}
+
+// Arrow Up / Down History Navigation
+if (terminalInput) {
+  terminalInput.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (commandHistory.length > 0 && historyIndex < commandHistory.length - 1) {
+        historyIndex++;
+        terminalInput.value = commandHistory[commandHistory.length - 1 - historyIndex];
+      }
+    } else if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (historyIndex > 0) {
+        historyIndex--;
+        terminalInput.value = commandHistory[commandHistory.length - 1 - historyIndex];
+      } else if (historyIndex === 0) {
+        historyIndex = -1;
+        terminalInput.value = '';
+      }
+    }
+  });
+}
+
+function escapeHtml(str) {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+window.insertTerminalCmd = function(cmd) {
+  if (terminalInput) {
+    terminalInput.value = cmd;
+    terminalInput.focus();
+    if (terminalCard) {
+      terminalCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+  }
+};
+
+// Execute Command Form Submit
+if (terminalForm && terminalInput) {
+  terminalForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const cmd = terminalInput.value.trim();
+    if (!cmd) return;
+
+    // Save to history
+    commandHistory.push(cmd);
+    historyIndex = -1;
+    terminalInput.value = '';
+
+    // Render user command
+    const userLine = document.createElement('div');
+    userLine.className = 'term-line term-user-cmd';
+    userLine.innerHTML = `<span class="term-green">bot@whatsapp:~$</span> <strong>${escapeHtml(cmd)}</strong>`;
+    if (terminalBody) {
+      terminalBody.appendChild(userLine);
+      terminalBody.scrollTop = terminalBody.scrollHeight;
+    }
+
+    try {
+      const res = await fetch('/api/terminal/execute', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ command: cmd })
+      });
+      const data = await res.json();
+
+      if (data.clear) {
+        clearTerminal();
+        return;
+      }
+
+      if (data.output && terminalBody) {
+        const outputLine = document.createElement('div');
+        outputLine.className = 'term-line term-output';
+        outputLine.textContent = data.output;
+        terminalBody.appendChild(outputLine);
+        terminalBody.scrollTop = terminalBody.scrollHeight;
+      }
+    } catch (err) {
+      appendTerminalLine(`Error: ${err.message}`, 'term-error');
+    }
+  });
+}
+
+// Live Logs Polling
+async function fetchLiveLogs(forceRerender = false) {
+  if (!isAuthenticated || activeTerminalTab !== 'logs' || !terminalBody) return;
+
+  try {
+    const res = await fetch('/api/terminal/logs', { cache: 'no-store' });
+    if (!res.ok) return;
+    const data = await res.json();
+    const logs = data.logs || [];
+
+    if (forceRerender || logs.length !== lastLogCount) {
+      lastLogCount = logs.length;
+      terminalBody.innerHTML = '';
+      if (logs.length === 0) {
+        terminalBody.innerHTML = '<div class="term-line term-dim">No logs recorded yet.</div>';
+        return;
+      }
+      logs.slice(-100).forEach(log => {
+        const line = document.createElement('div');
+        const colorClass = log.type === 'error' ? 'term-error' :
+                           log.type === 'warn' ? 'term-warn' :
+                           log.type === 'command' ? 'term-cyan' : 'term-output';
+        line.className = `term-line ${colorClass}`;
+        line.innerHTML = `<span class="term-dim">[${log.time}]</span> ${escapeHtml(log.text)}`;
+        terminalBody.appendChild(line);
+      });
+      terminalBody.scrollTop = terminalBody.scrollHeight;
+    }
+  } catch (_) {}
+}
+
+setInterval(() => {
+  if (isAuthenticated && activeTerminalTab === 'logs') fetchLiveLogs(false);
+}, 2500);
 
