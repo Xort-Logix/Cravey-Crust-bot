@@ -17,6 +17,5 @@ services:
       # Crucial: persist auth state so you don't need to re-scan QR code on container restarts
       - ./auth:/app/auth
       - ./downloads:/app/downloads
-      - ./public:/app/public
     stdin_open: true
     tty: true
