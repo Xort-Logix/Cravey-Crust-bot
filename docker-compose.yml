@@ -13,6 +13,12 @@ services:
       - PREFIX=${PREFIX:-.}
       - OWNER_NUMBER=${OWNER_NUMBER:-}
       - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - DASHBOARD_USER=${DASHBOARD_USER:-admin}
+      - DASHBOARD_PASS=${DASHBOARD_PASS:-xortlogix}
+      - N8N_ENABLED=${N8N_ENABLED:-true}
+      - N8N_WEBHOOK_URL=${N8N_WEBHOOK_URL:-https://n8n.srv2029678.hstgr.cloud/webhook/whatsapp-incoming}
+      - N8N_BOT_SECRET=${N8N_BOT_SECRET:-my-test-secret-123}
+      - N8N_TIMEOUT=${N8N_TIMEOUT:-10000}
     volumes:
       # Crucial: persist auth state so you don't need to re-scan QR code on container restarts
       - ./auth:/app/auth

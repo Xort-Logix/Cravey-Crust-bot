@@ -46,8 +46,8 @@ const PREFIX = process.env.PREFIX || '.';
 const OWNER_NUMBER = process.env.OWNER_NUMBER || '';
 const AUTO_REPLY = process.env.AUTO_REPLY !== 'false';
 const PORT = process.env.PORT || 3000;
-const DASHBOARD_USER = process.env.DASHBOARD_USER || 'workwithasim';
-const DASHBOARD_PASS = process.env.DASHBOARD_PASS || 'a4asimkhalid';
+const DASHBOARD_USER = process.env.DASHBOARD_USER || 'admin';
+const DASHBOARD_PASS = process.env.DASHBOARD_PASS || 'xortlogix';
 const AUTH_SECRET = process.env.AUTH_SECRET || crypto.randomBytes(32).toString('hex');
 
 // ─── n8n Integration Config ───────────────────────────────
