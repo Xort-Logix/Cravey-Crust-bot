@@ -653,7 +653,7 @@ async function checkStatus() {
       const termPrompt = document.querySelector('.term-prompt');
       if (termPrompt) {
         const displayNum = current.user?.number || (current.id === 'primary' ? 'bot' : current.id);
-        termPrompt.textContent = `bot@${displayNum}:~$`;
+        termPrompt.textContent = `xortlogix@${displayNum}:~$`;
       }
     } 
     else if (current.state === 'pairing_code') {
@@ -786,7 +786,7 @@ function clearTerminal() {
   if (!terminalBody) return;
   terminalBody.innerHTML = '';
   if (activeTerminalTab === 'cmd') {
-    appendTerminalLine('WhatsApp Bot Terminal [Web Console v1.0]', 'term-system');
+    appendTerminalLine('Xortlogix Bot Terminal [Web Console v1.0]', 'term-system');
     appendTerminalLine('Type "help" for commands, "status" for stats, or click Live Logs.', 'term-dim');
     appendTerminalLine('────────────────────────────────────────────────────────────────', 'term-dim');
   }
@@ -868,7 +868,7 @@ if (terminalForm && terminalInput) {
     // Render user command
     const userLine = document.createElement('div');
     userLine.className = 'term-line term-user-cmd';
-    userLine.innerHTML = `<span class="term-green">bot@whatsapp:~$</span> <strong>${escapeHtml(cmd)}</strong>`;
+    userLine.innerHTML = `<span class="term-green">xortlogix@bot:~$</span> <strong>${escapeHtml(cmd)}</strong>`;
     if (terminalBody) {
       terminalBody.appendChild(userLine);
       terminalBody.scrollTop = terminalBody.scrollHeight;
