@@ -675,14 +675,11 @@ async function loadCommands() {
             const cmd = mod.default;
             if (cmd && cmd.name) {
                 commands.set(cmd.name, cmd);
-                console.log(`  ✅ Loaded command: .${cmd.name}`);
             }
         } catch (err) {
             console.error(`  ❌ Failed to load command ${file}:`, err.message);
         }
     }
-
-    console.log(`\n📦 Total commands loaded: ${commands.size}\n`);
 }
 
 // ─── Auto-Reply Map ───────────────────────────────────────

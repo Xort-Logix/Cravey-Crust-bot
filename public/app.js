@@ -647,7 +647,7 @@ async function checkStatus() {
       statName.textContent = current.user?.name || current.name || 'WhatsApp User';
       statNumber.textContent = current.user?.number ? `+${current.user.number}` : 'Connected';
       if (statPrefix) statPrefix.textContent = current.prefix || '.';
-      statCommands.textContent = `${current.commandsCount || 12} loaded`;
+      if (statCommands) statCommands.textContent = `${current.commandsCount || 12} loaded`;
       statUptime.textContent = formatUptime(current.uptime);
 
       const termPrompt = document.querySelector('.term-prompt');
