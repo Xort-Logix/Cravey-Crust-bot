@@ -646,7 +646,7 @@ async function checkStatus() {
 
       statName.textContent = current.user?.name || current.name || 'WhatsApp User';
       statNumber.textContent = current.user?.number ? `+${current.user.number}` : 'Connected';
-      statPrefix.textContent = current.prefix || '.';
+      if (statPrefix) statPrefix.textContent = current.prefix || '.';
       statCommands.textContent = `${current.commandsCount || 12} loaded`;
       statUptime.textContent = formatUptime(current.uptime);
 

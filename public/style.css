@@ -1138,10 +1138,10 @@ button {
   font-size: 15px;
 }
 
-/* ── Stats Grid (2x2) ── */
+/* ── Stats Grid (3 cards) ── */
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 14px;
   width: 100%;
 }
