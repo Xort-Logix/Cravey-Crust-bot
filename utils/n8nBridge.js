@@ -145,12 +145,16 @@ export function buildN8nPayload(sock, msg, session, text) {
     // ── Build Payload ───────────────────────────────────
     const payload = {
         sessionId,
+        sessionKey:  jid || phone || 'default',
         chatId:      jid,
         phone,
         name,
         messageId:   msg.key.id,
         messageType,
         message:     text || '',
+        text:        text || '',
+        chatInput:   text || '',
+        content:     text || '',
         timestamp:   msg.messageTimestamp
             ? Number(msg.messageTimestamp)
             : Math.floor(Date.now() / 1000),
