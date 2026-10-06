@@ -41,15 +41,6 @@ Manage your bot like a pro with a stunning, modern UI.
 - **Multi-Account:** Run 2, 3, or more WhatsApp numbers on the same server.
 - **Live Terminal:** Watch real-time bot activity, errors, and webhook dispatches from your browser.
 
-### 🛠️ Built-in Owner Toolkit
-When you message the bot from your own number, it acts as your personal utility belt (and keeps all output strictly private):
-- `.ai <question>` — Instant ChatGPT-powered answers.
-- `.vv` — Automatically saves and forwards "View-Once" media to your chat.
-- `.download <url>` — Downloads Instagram Reels and TikToks instantly.
-- `.sticker` — Converts images and videos into high-quality WhatsApp stickers.
-- **Anti-Delete:** Automatically recovers and forwards deleted messages to you.
-
----
 
 ## 🚀 Quick Start
 
