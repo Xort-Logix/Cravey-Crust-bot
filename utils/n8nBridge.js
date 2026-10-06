@@ -13,6 +13,7 @@
 
 import axios from 'axios';
 import { extractLocation, extractGoogleMapsUrl } from './location.js';
+import { resolveSenderIdentity } from './senderIdentity.js';
 
 // ─── Config (read once at startup) ───────────────────────
 export const N8N_ENABLED     = process.env.N8N_ENABLED !== 'false';   // true unless explicitly 'false'
@@ -37,7 +38,8 @@ export async function sendToN8n(payload) {
         return;
     }
 
-    console.log(`[N8N] Forwarding message from ${payload.phone} (type: ${payload.messageType})`);
+    const phoneDisplay = payload.phoneVerified ? payload.phone : `(unverified, source: ${payload.phoneSource})`;
+    console.log(`[N8N] Forwarding message from ${phoneDisplay} (type: ${payload.messageType})`);
 
     try {
         await axios.post(N8N_WEBHOOK_URL, payload, {
@@ -78,10 +80,21 @@ export async function sendToN8n(payload) {
  * @returns {object}        Normalized payload ready to POST to n8n
  */
 export function buildN8nPayload(sock, msg, session, text) {
-    const jid      = msg.key.remoteJid;
-    const sender   = msg.key.participant || msg.key.remoteJid;
-    const phone    = sender.split(':')[0].replace('@s.whatsapp.net', '').replace(/\D/g, '');
+    const jid       = msg.key.remoteJid;
     const sessionId = session?.id || 'primary';
+
+    // ── Safe sender identity resolution ────────────────────
+    // Replaces the unsafe sender extraction that could treat @lid digits as a phone number.
+    // resolveSenderIdentity() never converts LID bytes to phone digits.
+    const identity  = resolveSenderIdentity(sock, msg, session);
+    const phone     = identity.phone; // empty string when not safely known
+
+    // Log identity resolution result (no sensitive data exposed)
+    if (identity.phoneVerified) {
+        console.log(`[N8N] Sender identity: verified phone source=${identity.phoneSource}`);
+    } else if (identity.phoneSource === 'unresolved_lid') {
+        console.log(`[N8N] Sender identity: unresolved LID, phone not available`);
+    }
 
     // Best available contact/push name — never fail if missing
     const name = msg.pushName || '';
@@ -145,20 +158,35 @@ export function buildN8nPayload(sock, msg, session, text) {
     // ── Build Payload ───────────────────────────────────
     const payload = {
         sessionId,
-        sessionKey:  jid || phone || 'default',
-        chatId:      jid,
+        // chatId is always the routing JID — NEVER replaced by phone JID.
+        // If original chat uses @lid, replies must still go to that @lid chat.
+        sessionKey:      jid || phone || 'default',
+        chatId:          jid,
+        // phone: the verified customer phone number, or "" when not safely known.
+        // NEVER contains raw @lid digits.
         phone,
         name,
-        messageId:   msg.key.id,
+        messageId:       msg.key.id,
         messageType,
-        message:     text || '',
-        text:        text || '',
-        chatInput:   text || '',
-        content:     text || '',
-        timestamp:   msg.messageTimestamp
+        message:         text || '',
+        text:            text || '',
+        chatInput:       text || '',
+        content:         text || '',
+        timestamp:       msg.messageTimestamp
             ? Number(msg.messageTimestamp)
             : Math.floor(Date.now() / 1000),
-        fromMe:      !!msg.key.fromMe,
+        fromMe:          !!msg.key.fromMe,
+        // ── Extended sender identity fields (additive — new in v1.1) ──
+        // whatsappPhone: same as phone, verified @s.whatsapp.net phone digits
+        whatsappPhone:   identity.whatsappPhone,
+        // phoneVerified: true only when phone was extracted from a real PN JID
+        phoneVerified:   identity.phoneVerified,
+        // phoneSource: which Baileys key field the phone was resolved from
+        phoneSource:     identity.phoneSource,
+        // senderJid: the @s.whatsapp.net JID used for phone resolution, or ""
+        senderJid:       identity.senderJid,
+        // senderLid: the @lid JID of the sender, or "" if none observed
+        senderLid:       identity.senderLid,
     };
 
     // ── Attach location object (additive — never removes existing fields) ─
