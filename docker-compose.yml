@@ -3,11 +3,14 @@ services:
     build: .
     container_name: whatsapp-bot
     restart: unless-stopped
+
     ports:
       - "3000:3000"
+
     env_file:
       - path: .env
         required: false
+
     environment:
       - PORT=${PORT:-3000}
       - PREFIX=${PREFIX:-.}
@@ -20,9 +23,27 @@ services:
       - N8N_BOT_SECRET=${N8N_BOT_SECRET:-my-test-secret-123}
       - N8N_TIMEOUT=${N8N_TIMEOUT:-10000}
       - SERVER_IP=${SERVER_IP:-201.18.214.97}
+
     volumes:
-      # Crucial: persist auth state so you don't need to re-scan QR code on container restarts
       - ./auth:/app/auth
       - ./downloads:/app/downloads
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.whatsapp-bot.rule=Host(`bot.craveycrust.com`)"
+      - "traefik.http.routers.whatsapp-bot.entrypoints=websecure"
+      - "traefik.http.routers.whatsapp-bot.tls=true"
+      - "traefik.http.routers.whatsapp-bot.tls.certresolver=mytlschallenge"
+      - "traefik.http.services.whatsapp-bot.loadbalancer.server.port=3000"
+      - "traefik.docker.network=n8n_default"
+
+    networks:
+      - default
+      - n8n_default
+
     stdin_open: true
     tty: true
+
+networks:
+  n8n_default:
+    external: true
